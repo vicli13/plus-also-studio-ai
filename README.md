@@ -1,6 +1,6 @@
 # ✨ AI Image Transformer – Plus Also Studios AI Challenge 2025
 
-This is a submission for **Brief 1 [IMAGE TO IMAGE]** from the Plus Also Studios AI Intern Challenge.  
+This is a submission for **Brief 1 [IMAGE TO IMAGE]** from the Plus Also Studios AI Challenge.  
 It is a lightweight and visually engaging platform that allows users to transform uploaded product images with a custom prompt and download the result.
 
 Live Demo: [https://plus-also-studio-ai.vercel.app](https://plus-also-studio-ai.vercel.app)  
@@ -62,6 +62,7 @@ npm run dev
 - Upload various image types (`.jpg`, `.png`, etc.)
 - Try a range of prompts (e.g., `make it a watercolor painting`, `add a vintage effect`)
 - Switch between aspect ratios (`1:1`, `3:2`, `2:3`) and verify correct output dimensions
+- Click **"Generate Image"** and wait till a image has been generated and displayed
 - Click **"Download Image"** and confirm the image properly downloaded
 - Verify meaningful error messages are displayed when the API fails
 
@@ -98,4 +99,4 @@ plus-also-studio-ai/
 - API key is accessed using `import.meta.env.VITE_OPENAI_API_KEY`, following Vite’s environment variable conventions.
 - No backend is used to make this light; all image processing and API interactions happen on the frontend via OpenAI's GPT-4o and GPT-Image-1.
 - The ratio are set to `1024x1024`, `1536x1024` and `1024x1536` due to the limitation of the model, see [https://platform.openai.com/docs/guides/image-generation?image-generation-model=gpt-image-1](https://platform.openai.com/docs/guides/image-generation?image-generation-model=gpt-image-1) for further details.
-- The UI is designed to be mobile-responsive, animated, and accessible, with clean visual hierarchy using Tailwind’s utility-first classes; I used my favourite colours throughout the ui ^\_^
+- The UI is designed to be mobile-responsive, animated, and accessible, with clean visual hierarchy using Tailwind’s utility-first classes; I used my favourite colours in the UI design ^\_^
