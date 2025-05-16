@@ -4,7 +4,7 @@ export default function App() {
   const [image, setImage] = useState(null);
   const [prompt, setPrompt] = useState('');
   const [aspect, setAspect] = useState('1:1');
-  const [generatedUrl, setGeneratedUrl] = useState('');
+  const [generatedImage, setGeneratedImage] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleUpload = (e) => {
@@ -51,37 +51,51 @@ export default function App() {
           })
         });
 
+        
         const visionData = await visionResponse.json();
         if (!visionResponse.ok || !visionData.choices?.[0]) throw new Error(visionData.error?.message || 'Vision API failed');
-
+        // console.log("successfully read image")
+        
         const imageDescription = visionData.choices[0].message.content;
+        // console.log(imageDescription)
 
         const sizeMap = {
           '1:1': '1024x1024',
-          '16:9': '1792x1024',
-          '9:16': '1024x1792'
+          '3:2': '1536x1024',
+          '2:3': '1024x1536',
+          'Auto': 'auto'
         };
 
-        const dalleResponse = await fetch("https://api.openai.com/v1/images/generations", {
+        const image1Response = await fetch("https://api.openai.com/v1/images/generations", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${apiKey}`
           },
           body: JSON.stringify({
-            model: "dall-e-3",
+            model: "gpt-image-1",
             prompt: `Based on this: ${imageDescription}. Modify with: ${prompt}`,
-            n: 1,
             size: sizeMap[aspect],
-            quality: "standard"
+            quality: "low",
           })
         });
 
-        const dalleData = await dalleResponse.json();
-        if (dalleData.error) throw new Error(dalleData.error.message);
-        setGeneratedUrl(dalleData.data[0].url);
+        const image1Data = await image1Response.json();
+
+        // console.log(image1Data)
+        if (image1Data.error) throw new Error(image1Data.error.message);
+
+        if (image1Data.data && image1Data.data[0]) {
+          const base64Data = image1Data.data[0].b64_json;
+          // Convert base64 to data URL for display
+          const imageDataUrl = `data:image/png;base64,${base64Data}`;
+          setGeneratedImage(imageDataUrl);
+        } else {
+          throw new Error('No image data received');
+        }
+
       } catch (err) {
-        console.error(err);
+        console.error('Error details:', err);
         alert(`Error generating image: ${err.message}`);
       } finally {
         setLoading(false);
@@ -89,14 +103,26 @@ export default function App() {
     };
     reader.readAsDataURL(image);
   };
+
+   // Helper function to download the generated image
+   const downloadImage = () => {
+    if (!generatedImage) return;
+    
+    const link = document.createElement('a');
+    link.href = generatedImage;
+    link.download = `vic-ai-generated-image-${Date.now()}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-100 via-purple-100 to-blue-100 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* You can uncomment these for subtle floating elements */}
-        {/* <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-300/30 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-pulse"></div> */}
-        {/* <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-300/30 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-pulse"></div> */}
-        {/* <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-rose-300/30 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-pulse"></div> */}
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-300/30 rounded-full mix-blend-multiply filter blur-xl opacity-80 animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-300/30 rounded-full mix-blend-multiply filter blur-xl opacity-80 animate-pulse"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-rose-700/30 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-pulse"></div>
       </div>
   
       <div className="relative z-10 flex items-center justify-center min-h-screen px-4 py-8">
@@ -172,8 +198,9 @@ export default function App() {
               onChange={(e) => setAspect(e.target.value)}
             >
               <option value="1:1" className="bg-white">Square (1:1)</option>
-              <option value="16:9" className="bg-white">Landscape (16:9)</option>
-              <option value="9:16" className="bg-white">Portrait (9:16)</option>
+              <option value="3:2" className="bg-white">Landscape (3:2)</option>
+              <option value="2:3" className="bg-white">Portrait (2:3)</option>
+              <option value="Auto" className="bg-white">Auto</option>
             </select>
           </div>
   
@@ -198,29 +225,19 @@ export default function App() {
           </button>
   
           {/* Generated Image */}
-          {generatedUrl && (
+          {generatedImage && (
             <div className="space-y-4 animate-in slide-in-from-bottom duration-700">
               <label className="text-gray-700 font-medium text-sm uppercase tracking-wider">Generated Image</label>
               <div className="relative group overflow-hidden rounded-2xl shadow-md">
                 <img 
-                  src={generatedUrl} 
+                  src={generatedImage} 
                   alt="Generated" 
                   className="w-full rounded-2xl shadow-lg transition-transform duration-300 group-hover:scale-105" 
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
-              <a
-                href={generatedUrl}
-                onClick={(e) => {
-                  const proceed = window.confirm(
-                    "You are about to be directed to the image link.\n\nPlease right-click and choose 'Download' to save the image.\n\nReady to proceed?"
-                  );
-                  if (!proceed) {
-                    e.preventDefault(); // Stop navigation if user clicks Cancel
-                  }
-                }}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={downloadImage}
                 className="block w-full text-center relative group overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-sky-400 to-blue-400 rounded-2xl"></div>
@@ -228,7 +245,7 @@ export default function App() {
                 <div className="relative bg-gradient-to-r from-sky-400 to-blue-400 text-white px-6 py-3 rounded-2xl font-bold transition-all duration-300 group-hover:scale-105">
                   💾 Download Image
                 </div>
-              </a>
+              </button>
             </div>
           )}
         </div>

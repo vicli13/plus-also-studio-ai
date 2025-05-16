@@ -12,10 +12,10 @@ GitHub Repo: [https://github.com/vicli13/plus-also-studio-ai](https://github.com
 
 - Upload any product image (e.g. can of beer, item of clothing, etc.)
 - Enter a creative prompt to modify the image
-- Select aspect ratio: `1:1`, `16:9`, `9:16`
-- Uses GPT-4o Vision to interpret the image and DALL·E 3 to generate a modified version
+- Select aspect ratio: `1:1`, `3:2`, `2:3`
+- Uses GPT-4o Vision to interpret the image and GPT-Image-1 (latest model) to generate a modified version
 - Download the generated image
-- Fully responsive, clean, and animated UI (built with Tailwind CSS)
+- Fully responsive, clean, and animated UI (built with Tailwind CSS), compatible on mobile too
 
 ---
 
@@ -23,7 +23,7 @@ GitHub Repo: [https://github.com/vicli13/plus-also-studio-ai](https://github.com
 
 - **Frontend**: React (Vite)
 - **Styling**: Tailwind CSS v4
-- **AI**: OpenAI GPT-4o + DALL·E 3 API
+- **AI**: OpenAI GPT-4o + GPT-Image-1 API
 - **Hosting**: Vercel
 
 ---
@@ -61,9 +61,8 @@ npm run dev
 
 - Upload various image types (`.jpg`, `.png`, etc.)
 - Try a range of prompts (e.g., `make it a watercolor painting`, `add a vintage effect`)
-- Switch between aspect ratios (`1:1`, `16:9`, `9:16`) and verify correct output dimensions
-- Click **"Download Image"** and confirm the image opens in a new tab
-- Confirm that a popup appears before redirecting to the image URL
+- Switch between aspect ratios (`1:1`, `3:2`, `2:3`) and verify correct output dimensions
+- Click **"Download Image"** and confirm the image properly downloaded
 - Verify meaningful error messages are displayed when inputs are missing or the API fails
 
 ---
@@ -95,8 +94,8 @@ plus-also-studio-ai/
 ## 🔒 Notes
 
 - `.env` file is excluded from Git via `.gitignore` to keep API keys secure. (You may see `.env` from the commit history, but that token has been disabled)
-- Requires an OpenAI API key with access to GPT-4o Vision and DALL·E 3.
+- Requires an OpenAI API key with access to GPT-4o Vision and GPT-Image-1.
 - API key is accessed using `import.meta.env.VITE_OPENAI_API_KEY`, following Vite’s environment variable conventions.
-- No backend is used; all image processing and API interactions happen on the frontend via OpenAI's GPT-4o and DALL·E 3.
-- The download button opens the generated image in a new tab with a confirmation prompt, since OpenAI image URLs do not allow direct forced download.
+- No backend is used to make this light; all image processing and API interactions happen on the frontend via OpenAI's GPT-4o and GPT-Image-1.
+- The ratio are set to `1024x1024`, `1536x1024` and `1024x1536` due to the limitation of the model, see [https://platform.openai.com/docs/guides/image-generation?image-generation-model=gpt-image-1](https://platform.openai.com/docs/guides/image-generation?image-generation-model=gpt-image-1) for further details.
 - The UI is designed to be mobile-responsive, animated, and accessible, with clean visual hierarchy using Tailwind’s utility-first classes.
