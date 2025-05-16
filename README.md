@@ -100,3 +100,4 @@ plus-also-studio-ai/
 - No backend is used to make this light; all image processing and API interactions happen on the frontend via OpenAI's GPT-4o and GPT-Image-1.
 - The ratio are set to `1024x1024`, `1536x1024` and `1024x1536` due to the limitation of the model, see [https://platform.openai.com/docs/guides/image-generation?image-generation-model=gpt-image-1](https://platform.openai.com/docs/guides/image-generation?image-generation-model=gpt-image-1) for further details.
 - The UI is designed to be mobile-responsive, animated, and accessible, with clean visual hierarchy using Tailwind’s utility-first classes; I used my favourite colours in the UI design ^\_^
+- Reminder: The image generator does not directly edit or modify the uploaded image. Instead, it uses the uploaded image as a reference to generate a new image based on the provided prompt.
